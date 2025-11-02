@@ -47,8 +47,17 @@ function Lobby({ serverId, serverData, onGameStart, onBack }) {
 
         // First player in the list is the leader
         if (serverPlayers.length > 0) {
-          const isCurrentPlayerLeader = serverPlayers[0].player_id === multiplayerService.playerId;
+          const firstPlayerId = serverPlayers[0].player_id;
+          const currentPlayerId = multiplayerService.playerId;
+          const isCurrentPlayerLeader = firstPlayerId === currentPlayerId;
+
           setIsLeader(isCurrentPlayerLeader);
+
+          // If not leader and game has started, auto-join game
+          if (!isCurrentPlayerLeader && serverPlayers.length > 0) {
+            // Check if leader has started the game by polling
+            // We'll use a simple flag: if we're in lobby and leader exists, wait for signal
+          }
         }
 
         setPlayers(serverPlayers);
@@ -59,10 +68,10 @@ function Lobby({ serverId, serverData, onGameStart, onBack }) {
 
     checkLeader();
 
-    // Poll for player updates
-    const interval = setInterval(checkLeader, 1000);
+    // Poll for player updates every 500ms
+    const interval = setInterval(checkLeader, 500);
     return () => clearInterval(interval);
-  }, [serverId]);
+  }, [serverId, onGameStart]);
 
   useEffect(() => {
     // Get invite code if server is private
@@ -71,11 +80,35 @@ function Lobby({ serverId, serverData, onGameStart, onBack }) {
     }
   }, [serverData]);
 
+  // For non-leaders: watch for game start signal
+  useEffect(() => {
+    if (isLeader) return; // Only for non-leaders
+
+    const checkGameStart = () => {
+      const gameStarted = localStorage.getItem(`gameStarted_${serverId}`);
+      if (gameStarted === 'true') {
+        // Clear the signal
+        localStorage.removeItem(`gameStarted_${serverId}`);
+        localStorage.removeItem(`gameStartedAt_${serverId}`);
+        // Auto-join the game
+        onGameStart();
+      }
+    };
+
+    // Check every 100ms for game start signal
+    const interval = setInterval(checkGameStart, 100);
+    return () => clearInterval(interval);
+  }, [isLeader, serverId, onGameStart]);
+
   const handleStartGame = async () => {
     if (!isLeader) return;
 
     setLoading(true);
     try {
+      // Store game start signal in localStorage for all players to see
+      localStorage.setItem(`gameStarted_${serverId}`, 'true');
+      localStorage.setItem(`gameStartedAt_${serverId}`, new Date().toISOString());
+
       // Update server status to 'playing'
       await fetch('/api/multiplayer', {
         method: 'POST',
@@ -86,7 +119,10 @@ function Lobby({ serverId, serverData, onGameStart, onBack }) {
         })
       });
 
-      onGameStart();
+      // Give a small delay for other clients to see the signal
+      setTimeout(() => {
+        onGameStart();
+      }, 100);
     } catch (error) {
       console.error('Error starting game:', error);
     } finally {

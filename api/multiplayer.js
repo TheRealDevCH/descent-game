@@ -204,6 +204,57 @@ export default async function handler(req, res) {
       return res.status(200).json({ success: true });
     }
 
+    if (action === 'startGame') {
+      const { serverId } = req.body;
+
+      if (!serverId) {
+        return res.status(400).json({ error: 'Server ID required' });
+      }
+
+      // Get all players in the server
+      const { data: serverPlayers, error: playersError } = await supabase
+        .from('server_players')
+        .select('player_id')
+        .eq('server_id', serverId);
+
+      if (playersError) {
+        return res.status(400).json({ error: playersError.message });
+      }
+
+      // Mark all players as "game_started" by storing in a temporary table or using a flag
+      // For now, we'll just return success and the clients will poll for game start
+      return res.status(200).json({
+        success: true,
+        message: 'Game started',
+        playerCount: serverPlayers?.length || 0
+      });
+    }
+
+    if (action === 'checkGameStarted') {
+      const { serverId } = req.body;
+
+      if (!serverId) {
+        return res.status(400).json({ error: 'Server ID required' });
+      }
+
+      // For now, we'll use a simple approach: check if the server exists
+      // In a real implementation, you'd have a game_status field
+      const { data: server, error } = await supabase
+        .from('servers')
+        .select('*')
+        .eq('id', serverId)
+        .single();
+
+      if (error) {
+        return res.status(400).json({ error: error.message });
+      }
+
+      return res.status(200).json({
+        gameStarted: true,
+        server: server
+      });
+    }
+
     return res.status(400).json({ error: 'Unknown action' });
   } catch (error) {
     return res.status(500).json({ error: error.message });
