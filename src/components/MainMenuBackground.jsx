@@ -1,49 +1,90 @@
 import { useEffect, useRef } from 'react';
-import GameEngine from '../game/GameEngine';
-import useGameStore from '../store/gameStore';
+import * as THREE from 'three';
+import TunnelGenerator from '../game/TunnelGenerator';
+import ObstacleManager from '../game/ObstacleManager';
+import ParticleSystem from '../game/ParticleSystem';
 import audioSystem from '../utils/audioSystem';
 
 function MainMenuBackground() {
   const containerRef = useRef(null);
-  const engineRef = useRef(null);
+  const sceneRef = useRef(null);
+  const cameraRef = useRef(null);
+  const rendererRef = useRef(null);
+  const tunnelRef = useRef(null);
+  const obstacleRef = useRef(null);
+  const particleRef = useRef(null);
 
   useEffect(() => {
-    if (!containerRef.current || engineRef.current) return;
+    if (!containerRef.current) return;
 
     audioSystem.init();
 
-    const mockGameStore = {
-      getState: () => ({
-        gameState: 'menu-background',
-        depth: 0,
-        speed: 1,
-        playerX: Math.sin(Date.now() / 3000) * 0.5,
-        lastMilestone: 0,
-      }),
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
+    camera.position.set(0, 2, 8);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(0x000000, 0.1);
+    containerRef.current.appendChild(renderer.domElement);
+
+    const tunnelGenerator = new TunnelGenerator(scene);
+    const obstacleManager = new ObstacleManager(scene, audioSystem, {
+      getState: () => ({ depth: 0 }),
       setState: () => {},
+    });
+    const particleSystem = new ParticleSystem(scene);
+
+    sceneRef.current = scene;
+    cameraRef.current = camera;
+    rendererRef.current = renderer;
+    tunnelRef.current = tunnelGenerator;
+    obstacleRef.current = obstacleManager;
+    particleRef.current = particleSystem;
+
+    let depth = 0;
+    let cameraZ = 8;
+
+    const animate = () => {
+      requestAnimationFrame(animate);
+
+      depth += 0.5;
+      cameraZ -= 0.5;
+      camera.position.z = cameraZ;
+      camera.position.x = Math.sin(Date.now() / 3000) * 0.5;
+      camera.lookAt(0, 0, cameraZ - 5);
+
+      tunnelGenerator.update(cameraZ, depth);
+      obstacleManager.update(cameraZ, camera.position.x, depth);
+      particleSystem.update(camera.position, 5);
+
+      renderer.render(scene, camera);
     };
 
-    engineRef.current = new GameEngine(
-      containerRef.current,
-      mockGameStore,
-      audioSystem
-    );
+    animate();
 
-    const animationInterval = setInterval(() => {
-      if (engineRef.current && engineRef.current.gameStore) {
-        const state = engineRef.current.gameStore.getState();
-        state.depth += 50;
-        state.speed = 1 + (state.depth / 2000);
-        state.playerX = Math.sin(Date.now() / 3000) * 0.5;
-      }
-    }, 16);
+    const handleResize = () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    };
+
+    window.addEventListener('resize', handleResize);
 
     return () => {
-      clearInterval(animationInterval);
-      if (engineRef.current) {
-        engineRef.current.dispose();
-        engineRef.current = null;
+      window.removeEventListener('resize', handleResize);
+      if (containerRef.current && renderer.domElement.parentNode === containerRef.current) {
+        containerRef.current.removeChild(renderer.domElement);
       }
+      renderer.dispose();
+      tunnelGenerator.dispose();
+      obstacleManager.dispose();
+      particleSystem.dispose();
     };
   }, []);
 

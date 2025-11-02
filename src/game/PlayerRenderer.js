@@ -34,24 +34,8 @@ class PlayerRenderer {
     const glowMesh = new THREE.Mesh(glowGeometry, glowMaterial);
     group.add(glowMesh);
 
-    const trailGeometry = new THREE.BufferGeometry();
-    const trailPositions = [];
-    for (let i = 0; i < 20; i++) {
-      trailPositions.push(0, 0, i * 0.3);
-    }
-    trailGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(trailPositions), 3));
-
-    const trailMaterial = new THREE.LineBasicMaterial({
-      color: new THREE.Color(this.color),
-      transparent: true,
-      opacity: 0.3,
-      linewidth: 2,
-    });
-
-    const trail = new THREE.Line(trailGeometry, trailMaterial);
-    group.add(trail);
-
-    group.position.set(0, 0, 5);
+    group.position.set(0, -100, 5);
+    group.visible = false;
     this.scene.add(group);
     this.mesh = group;
   }
