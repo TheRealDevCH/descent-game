@@ -94,12 +94,15 @@ class MultiplayerService {
 
   async getActivePlayers() {
     try {
+      // Always get the latest serverId from localStorage
+      const currentServerId = localStorage.getItem('serverId') || this.serverId;
+
       const response = await fetch(`${API_URL}/multiplayer`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'getActivePlayers',
-          serverId: this.serverId
+          serverId: currentServerId
         })
       });
 
