@@ -213,6 +213,89 @@ export default async function handler(req, res) {
       return res.status(200).json({ success: true, message: 'Player marked as admin' });
     }
 
+    if (action === 'banPlayer') {
+      const { playerId, reason, durationHours, adminId } = req.body;
+
+      if (!playerId || !reason || !durationHours) {
+        return res.status(400).json({ error: 'Player ID, reason, and duration required' });
+      }
+
+      const expiresAt = new Date(Date.now() + durationHours * 60 * 60 * 1000);
+
+      const { data: ban, error } = await supabase
+        .from('bans')
+        .insert([
+          {
+            player_id: playerId,
+            banned_by: adminId,
+            reason,
+            ban_duration_hours: durationHours,
+            expires_at: expiresAt.toISOString(),
+            is_active: true
+          }
+        ])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      return res.status(201).json({ success: true, ban });
+    }
+
+    if (action === 'getBans') {
+      const { data: bans, error } = await supabase
+        .from('bans')
+        .select('*, players(username)')
+        .eq('is_active', true)
+        .gt('expires_at', new Date().toISOString())
+        .order('expires_at', { ascending: false });
+
+      if (error) throw error;
+
+      return res.status(200).json({ bans });
+    }
+
+    if (action === 'unbanPlayer') {
+      const { banId } = req.body;
+
+      if (!banId) {
+        return res.status(400).json({ error: 'Ban ID required' });
+      }
+
+      const { error } = await supabase
+        .from('bans')
+        .update({ is_active: false })
+        .eq('id', banId);
+
+      if (error) throw error;
+
+      return res.status(200).json({ success: true, message: 'Player unbanned' });
+    }
+
+    if (action === 'checkBan') {
+      const { playerId } = req.body;
+
+      if (!playerId) {
+        return res.status(400).json({ error: 'Player ID required' });
+      }
+
+      const { data: ban, error } = await supabase
+        .from('bans')
+        .select('*')
+        .eq('player_id', playerId)
+        .eq('is_active', true)
+        .gt('expires_at', new Date().toISOString())
+        .single();
+
+      if (error && error.code !== 'PGRST116') throw error;
+
+      if (ban) {
+        return res.status(200).json({ isBanned: true, ban });
+      }
+
+      return res.status(200).json({ isBanned: false });
+    }
+
     return res.status(400).json({ error: 'Unknown action' });
   } catch (error) {
     console.error('Admin API error:', error);

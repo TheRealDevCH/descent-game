@@ -11,6 +11,10 @@ function AdminPanel() {
   const [error, setError] = useState(null);
   const [newServerName, setNewServerName] = useState('');
   const [newPlayerUsername, setNewPlayerUsername] = useState('');
+  const [bans, setBans] = useState([]);
+  const [banPlayerId, setBanPlayerId] = useState('');
+  const [banReason, setBanReason] = useState('');
+  const [banDuration, setBanDuration] = useState(24);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -19,8 +23,26 @@ function AdminPanel() {
       setError(null);
       fetchServers();
       fetchPlayers();
+      fetchBans();
     } else {
       setError('Invalid password');
+    }
+  };
+
+  const fetchBans = async () => {
+    try {
+      const response = await fetch('/api/admin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          password: '270696',
+          action: 'getBans'
+        })
+      });
+      const data = await response.json();
+      if (data.bans) setBans(data.bans);
+    } catch (err) {
+      setError(err.message);
     }
   };
 
@@ -166,6 +188,61 @@ function AdminPanel() {
     }
   };
 
+  const banPlayer = async (e) => {
+    e.preventDefault();
+    if (!banPlayerId.trim() || !banReason.trim()) return;
+
+    try {
+      const response = await fetch('/api/admin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          password: '270696',
+          action: 'banPlayer',
+          playerId: banPlayerId,
+          reason: banReason,
+          durationHours: banDuration,
+          adminId: null
+        })
+      });
+      const data = await response.json();
+      if (data.success) {
+        setBanPlayerId('');
+        setBanReason('');
+        setBanDuration(24);
+        fetchBans();
+      } else {
+        setError(data.error);
+      }
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const unbanPlayer = async (banId) => {
+    if (!window.confirm('Are you sure you want to unban this player?')) return;
+
+    try {
+      const response = await fetch('/api/admin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          password: '270696',
+          action: 'unbanPlayer',
+          banId
+        })
+      });
+      const data = await response.json();
+      if (data.success) {
+        fetchBans();
+      } else {
+        setError(data.error);
+      }
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   if (!isAuthenticated) {
     return (
       <div className="admin-login">
@@ -206,6 +283,12 @@ function AdminPanel() {
           onClick={() => setActiveTab('players')}
         >
           Players
+        </button>
+        <button
+          className={`tab-button ${activeTab === 'bans' ? 'active' : ''}`}
+          onClick={() => setActiveTab('bans')}
+        >
+          Bans
         </button>
       </div>
 
@@ -288,6 +371,63 @@ function AdminPanel() {
                       className="delete-button"
                     >
                       Delete
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'bans' && (
+        <div className="admin-content">
+          <div className="create-section">
+            <h2>Ban Player</h2>
+            <form onSubmit={banPlayer}>
+              <input
+                type="text"
+                placeholder="Player ID"
+                value={banPlayerId}
+                onChange={(e) => setBanPlayerId(e.target.value)}
+              />
+              <input
+                type="text"
+                placeholder="Ban Reason"
+                value={banReason}
+                onChange={(e) => setBanReason(e.target.value)}
+              />
+              <input
+                type="number"
+                placeholder="Duration (hours)"
+                value={banDuration}
+                onChange={(e) => setBanDuration(parseInt(e.target.value))}
+                min="1"
+              />
+              <button type="submit">Ban Player</button>
+            </form>
+          </div>
+
+          <div className="list-section">
+            <h2>Active Bans ({bans.length})</h2>
+            {loading ? (
+              <p>Loading...</p>
+            ) : (
+              <div className="admin-list">
+                {bans.map(ban => (
+                  <div key={ban.id} className="admin-item">
+                    <div className="item-info">
+                      <h3>{ban.players?.username || 'Unknown'}</h3>
+                      <p>Reason: {ban.reason}</p>
+                      <p>Duration: {ban.ban_duration_hours} hours</p>
+                      <p>Expires: {new Date(ban.expires_at).toLocaleString()}</p>
+                      <p>ID: {ban.id}</p>
+                    </div>
+                    <button
+                      onClick={() => unbanPlayer(ban.id)}
+                      className="delete-button"
+                    >
+                      Unban
                     </button>
                   </div>
                 ))}
