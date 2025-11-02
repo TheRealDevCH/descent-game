@@ -4,6 +4,7 @@ import useGameStore from '../store/gameStore';
 import audioSystem from '../utils/audioSystem';
 import Shop from './Shop';
 import CharacterEditor from './CharacterEditor';
+import MainMenuBackground from './MainMenuBackground';
 import './MainMenu.css';
 
 function MainMenu() {
@@ -66,12 +67,16 @@ function MainMenu() {
 
   return (
     <div className="main-menu fade-in">
+      <MainMenuBackground />
+
+      <div className="menu-overlay"></div>
+
       <div className="menu-content">
         <div className="title-container">
           <h1 className="game-title">{t('menu.title')}</h1>
           <p className="subtitle">{t('menu.subtitle')}</p>
         </div>
-        
+
         <div className="menu-buttons">
           <button className="button button-play" onClick={handlePlay}>
             {t('menu.play')}
@@ -89,12 +94,6 @@ function MainMenu() {
             {t('menu.settings')}
           </button>
         </div>
-      </div>
-      
-      <div className="background-animation">
-        <div className="gradient-orb orb-1"></div>
-        <div className="gradient-orb orb-2"></div>
-        <div className="gradient-orb orb-3"></div>
       </div>
     </div>
   );
