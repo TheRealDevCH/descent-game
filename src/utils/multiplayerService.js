@@ -6,6 +6,7 @@ class MultiplayerService {
     this.username = localStorage.getItem('username');
     this.characterSkin = localStorage.getItem('characterSkin') || 'classic';
     this.serverId = localStorage.getItem('serverId');
+    this.isAdmin = localStorage.getItem('isAdmin') === 'true';
     this.activePlayers = [];
     this.updateInterval = null;
   }

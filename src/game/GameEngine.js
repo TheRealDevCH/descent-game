@@ -6,6 +6,7 @@ import MultiplayerManager from './MultiplayerManager';
 import PlayerRenderer from './PlayerRenderer';
 import MusicSyncManager from './MusicSyncManager';
 import PowerupSystem from './PowerupSystem';
+import multiplayerService from '../utils/multiplayerService';
 
 class GameEngine {
   constructor(container, gameStore, audioSystem, serverId = null) {
@@ -28,8 +29,9 @@ class GameEngine {
     this.playerSpeed = 0;
     this.playerVelocityX = 0;
     this.cameraShake = 0;
-    this.cameraDistance = 8;
-    this.cameraHeight = 2;
+    this.cameraDistance = multiplayerService.isAdmin ? 15 : 8;
+    this.cameraHeight = multiplayerService.isAdmin ? 5 : 2;
+    this.isAdminView = multiplayerService.isAdmin;
 
     this.init();
   }

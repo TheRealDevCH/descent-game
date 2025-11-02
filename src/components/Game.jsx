@@ -28,6 +28,33 @@ function Game() {
     setServerId(id);
   }, []);
 
+  // Check if player is banned
+  useEffect(() => {
+    const checkBan = async () => {
+      if (gameState === 'playing' && multiplayerService.playerId) {
+        try {
+          const response = await fetch('/api/admin', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              password: '270696',
+              action: 'checkBan',
+              playerId: multiplayerService.playerId
+            })
+          });
+          const data = await response.json();
+          if (data.isBanned) {
+            alert(`You are banned! Reason: ${data.ban.reason}\nExpires: ${new Date(data.ban.expires_at).toLocaleString()}`);
+            returnToMenu();
+          }
+        } catch (error) {
+          console.error('Error checking ban:', error);
+        }
+      }
+    };
+    checkBan();
+  }, [gameState, returnToMenu]);
+
   // Register player in server when game starts
   useEffect(() => {
     if (gameState === 'playing' && serverId && multiplayerService.playerId) {
