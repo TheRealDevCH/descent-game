@@ -173,6 +173,14 @@ class MultiplayerManager {
     try {
       const players = await multiplayerService.getActivePlayers();
 
+      if (!players || players.length === 0) {
+        // No active players - remove all other players
+        this.otherPlayers.forEach((player, playerId) => {
+          this.removePlayer(playerId);
+        });
+        return;
+      }
+
       const currentPlayerIds = new Set(this.otherPlayers.keys());
       const newPlayerIds = new Set();
 
@@ -201,6 +209,7 @@ class MultiplayerManager {
         }
       });
 
+      // Remove players that are no longer active
       currentPlayerIds.forEach(playerId => {
         if (!newPlayerIds.has(playerId)) {
           this.removePlayer(playerId);

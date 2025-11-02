@@ -218,7 +218,10 @@ class GameEngine {
     if (this.tunnelGenerator) this.tunnelGenerator.reset();
     if (this.obstacleManager) this.obstacleManager.reset();
     if (this.particleSystem) this.particleSystem.reset();
-    if (this.multiplayerManager) this.multiplayerManager.startSync();
+    if (this.multiplayerManager) {
+      this.multiplayerManager.stopSync(); // Stop old sync
+      this.multiplayerManager.startSync(); // Start new sync
+    }
   }
 
   dispose() {
