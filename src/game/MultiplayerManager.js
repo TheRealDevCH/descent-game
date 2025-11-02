@@ -10,7 +10,7 @@ class MultiplayerManager {
     this.updateFrequency = 500;
   }
 
-  createPlayerMesh(skin, color, username = 'Player') {
+  createPlayerMesh(skin, color, username = 'Player', isAdmin = false) {
     const group = new THREE.Group();
 
     const geometry = new THREE.OctahedronGeometry(0.4, 2);
@@ -45,12 +45,14 @@ class MultiplayerManager {
     // Clear canvas
     ctx.clearRect(0, 0, nameCanvas.width, nameCanvas.height);
 
-    // Draw username
-    ctx.fillStyle = color;
+    // Draw username or ADMINISTRATOR
+    const displayText = isAdmin ? 'ADMINISTRATOR' : username.substring(0, 15);
+    const displayColor = isAdmin ? '#FFD700' : color; // Gold for admin
+    ctx.fillStyle = displayColor;
     ctx.font = 'bold 80px Arial';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(username.substring(0, 15), 256, 64);
+    ctx.fillText(displayText, 256, 64);
 
     const nameTexture = new THREE.CanvasTexture(nameCanvas);
     const nameGeometry = new THREE.PlaneGeometry(3, 0.75);
@@ -74,7 +76,8 @@ class MultiplayerManager {
     const mesh = this.createPlayerMesh(
       playerData.character_skin || 'classic',
       playerData.color || '#ff0080',
-      playerData.username || 'Player'
+      playerData.username || 'Player',
+      playerData.is_admin || false
     );
 
     mesh.position.set(
@@ -142,6 +145,7 @@ class MultiplayerManager {
           character_skin: player.players?.character_skin || 'classic',
           username: player.players?.username || 'Player',
           color: '#ff0080',
+          is_admin: player.players?.is_admin || false,
         };
 
         if (this.otherPlayers.has(player.player_id)) {
