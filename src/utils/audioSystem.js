@@ -8,6 +8,8 @@ class AudioSystem {
     this.currentMusic = null;
     this.musicEnabled = true;
     this.sfxEnabled = true;
+    this.musicVolume = 1.0;
+    this.sfxVolume = 1.0;
     this.initialized = false;
   }
 
@@ -56,26 +58,29 @@ class AudioSystem {
 
     // Menu click
     this.sounds.click = this.createClickSound();
+
+    // Powerup sound
+    this.sounds.powerup = this.createPowerupSound();
   }
 
   createWhooshSound() {
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    
+
     return () => {
       if (!this.sfxEnabled) return;
-      
+
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
-      
+
       oscillator.connect(gainNode);
       gainNode.connect(audioContext.destination);
-      
+
       oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
       oscillator.frequency.exponentialRampToValueAtTime(50, audioContext.currentTime + 0.1);
-      
-      gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-      
+
+      gainNode.gain.setValueAtTime(0.1 * this.sfxVolume, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01 * this.sfxVolume, audioContext.currentTime + 0.1);
+
       oscillator.start(audioContext.currentTime);
       oscillator.stop(audioContext.currentTime + 0.1);
     };
@@ -101,9 +106,9 @@ class AudioSystem {
       
       filter.type = 'lowpass';
       filter.frequency.setValueAtTime(1000, audioContext.currentTime);
-      
-      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+
+      gainNode.gain.setValueAtTime(0.3 * this.sfxVolume, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01 * this.sfxVolume, audioContext.currentTime + 0.3);
       
       oscillator.start(audioContext.currentTime);
       oscillator.stop(audioContext.currentTime + 0.3);
@@ -126,9 +131,9 @@ class AudioSystem {
       oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
       oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1); // E5
       oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2); // G5
-      
-      gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+
+      gainNode.gain.setValueAtTime(0.2 * this.sfxVolume, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01 * this.sfxVolume, audioContext.currentTime + 0.4);
       
       oscillator.start(audioContext.currentTime);
       oscillator.stop(audioContext.currentTime + 0.4);
@@ -137,23 +142,47 @@ class AudioSystem {
 
   createClickSound() {
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    
+
     return () => {
       if (!this.sfxEnabled) return;
-      
+
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
-      
+
       oscillator.connect(gainNode);
       gainNode.connect(audioContext.destination);
-      
+
       oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-      
-      gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.05);
-      
+
+      gainNode.gain.setValueAtTime(0.1 * this.sfxVolume, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01 * this.sfxVolume, audioContext.currentTime + 0.05);
+
       oscillator.start(audioContext.currentTime);
       oscillator.stop(audioContext.currentTime + 0.05);
+    };
+  }
+
+  createPowerupSound() {
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+    return () => {
+      if (!this.sfxEnabled) return;
+
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(400, audioContext.currentTime);
+      oscillator.frequency.exponentialRampToValueAtTime(800, audioContext.currentTime + 0.2);
+
+      gainNode.gain.setValueAtTime(0.2 * this.sfxVolume, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01 * this.sfxVolume, audioContext.currentTime + 0.2);
+
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.2);
     };
   }
 
@@ -219,6 +248,28 @@ class AudioSystem {
 
   setSFXEnabled(enabled) {
     this.sfxEnabled = enabled;
+  }
+
+  setMusicVolume(volume) {
+    this.musicVolume = Math.max(0, Math.min(1, volume));
+    if (this.gameplayMusic) {
+      this.gameplayMusic.volume = this.musicVolume * 0.5;
+    }
+    if (this.menuMusic) {
+      this.menuMusic.volume = this.musicVolume * 0.5;
+    }
+  }
+
+  setSfxVolume(volume) {
+    this.sfxVolume = Math.max(0, Math.min(1, volume));
+  }
+
+  getMusicVolume() {
+    return this.musicVolume;
+  }
+
+  getSfxVolume() {
+    return this.sfxVolume;
   }
 }
 
