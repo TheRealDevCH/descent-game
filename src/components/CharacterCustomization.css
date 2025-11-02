@@ -6,7 +6,7 @@
   justify-content: center;
   background: linear-gradient(135deg, #0a0015 0%, #1a0030 50%, #0a0015 100%);
   position: relative;
-  overflow: hidden;
+  overflow: auto;
 }
 
 .character-customization-content {
@@ -16,11 +16,12 @@
   gap: 30px;
   width: 100%;
   max-width: 1200px;
-  padding: 40px;
+  padding: 20px;
+  margin: auto;
 }
 
 .customization-title {
-  font-size: 80px;
+  font-size: clamp(40px, 8vw, 80px);
   font-weight: 900;
   letter-spacing: 6px;
   background: linear-gradient(135deg, #ff0080 0%, #ff8c00 50%, #ffff00 100%);
@@ -47,6 +48,13 @@
   align-items: start;
 }
 
+@media (max-width: 1024px) {
+  .customization-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
 .preview-section {
   display: flex;
   flex-direction: column;
@@ -55,8 +63,8 @@
 }
 
 .preview-box {
-  width: 300px;
-  height: 400px;
+  width: clamp(200px, 80vw, 300px);
+  height: clamp(250px, 100vw, 400px);
   background: rgba(255, 0, 128, 0.1);
   border: 3px solid rgba(255, 0, 128, 0.5);
   border-radius: 15px;
