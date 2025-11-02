@@ -107,11 +107,10 @@ class GameEngine {
     this.gameStore.getState().updateDepth(newDepth);
 
     const playerWorldX = state.playerX * 3;
-    const playerWorldZ = 5;
+    const playerWorldZ = -newDepth; // Player falls DOWN (negative Z)
 
-    const targetCameraZ = playerWorldZ - this.cameraDistance;
-    this.camera.position.z += (targetCameraZ - this.camera.position.z) * 0.1;
-    this.camera.position.z -= this.playerSpeed * deltaTime;
+    const targetCameraZ = playerWorldZ + this.cameraDistance;
+    this.camera.position.z = playerWorldZ + this.cameraDistance;
 
     const speedFactor = Math.min(state.speed / 5, 1);
     this.camera.rotation.z = this.playerVelocityX * 0.05 * speedFactor;
