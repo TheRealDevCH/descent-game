@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import useGameStore from '../store/gameStore';
 import GameEngine from '../game/GameEngine';
 import audioSystem from '../utils/audioSystem';
+import PowerupUI from './PowerupUI';
 import './Game.css';
 
 function Game() {
@@ -236,6 +237,9 @@ function Game() {
         </div>
       )}
       
+      {/* Powerup UI */}
+      {gameState === 'playing' && <PowerupUI gameEngine={engineRef.current} />}
+
       {/* PC controls hint */}
       <div className="pc-controls-hint">
         <div className="control-hint-item">

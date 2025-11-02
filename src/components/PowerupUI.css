@@ -1,0 +1,134 @@
+.powerup-ui {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px 20px;
+  border-radius: 12px;
+  font-family: 'Arial', sans-serif;
+  z-index: 100;
+  backdrop-filter: blur(10px);
+  border: 2px solid;
+  transition: all 0.3s ease;
+}
+
+.powerup-icon {
+  font-size: 32px;
+  animation: pulse 0.6s ease-in-out infinite;
+}
+
+.powerup-content {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.powerup-title {
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.powerup-subtitle {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.powerup-timer {
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+/* ACTIVE STATE - Super Saiyan Mode */
+.powerup-active {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.3) 0%, rgba(255, 165, 0, 0.3) 100%);
+  border-color: rgba(255, 215, 0, 0.8);
+  color: #ffd700;
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.6), inset 0 0 20px rgba(255, 215, 0, 0.2);
+}
+
+.powerup-active .powerup-icon {
+  animation: superSaiyan 0.3s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px #ffd700);
+}
+
+.powerup-active .powerup-glow {
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  border-radius: 12px;
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.3) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* COOLDOWN STATE */
+.powerup-cooldown {
+  background: linear-gradient(135deg, rgba(100, 100, 100, 0.3) 0%, rgba(80, 80, 80, 0.3) 100%);
+  border-color: rgba(150, 150, 150, 0.6);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.powerup-cooldown .powerup-icon {
+  opacity: 0.6;
+}
+
+/* READY STATE */
+.powerup-ready {
+  background: linear-gradient(135deg, rgba(0, 255, 0, 0.2) 0%, rgba(0, 200, 100, 0.2) 100%);
+  border-color: rgba(0, 255, 0, 0.6);
+  color: #00ff00;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.4);
+}
+
+.powerup-ready .powerup-icon {
+  animation: readyPulse 0.8s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px #00ff00);
+}
+
+/* ANIMATIONS */
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+@keyframes superSaiyan {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  25% { transform: scale(1.15) rotate(-5deg); }
+  50% { transform: scale(1.2) rotate(5deg); }
+  75% { transform: scale(1.15) rotate(-5deg); }
+}
+
+@keyframes readyPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.8; }
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .powerup-ui {
+    top: 10px;
+    right: 10px;
+    padding: 12px 15px;
+    gap: 10px;
+  }
+
+  .powerup-icon {
+    font-size: 24px;
+  }
+
+  .powerup-title {
+    font-size: 12px;
+  }
+
+  .powerup-timer {
+    font-size: 16px;
+  }
+}
+
