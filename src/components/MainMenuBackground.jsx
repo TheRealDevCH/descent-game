@@ -37,10 +37,10 @@ function MainMenuBackground() {
 
     let depth = 0;
     let cameraZ = 8;
-    let isRunning = true;
+    const stateRef = { isRunning: true };
 
     const animate = () => {
-      if (!isRunning) return;
+      if (!stateRef.isRunning) return;
 
       animationRef.current = requestAnimationFrame(animate);
 
@@ -68,7 +68,7 @@ function MainMenuBackground() {
     window.addEventListener('resize', handleResize);
 
     return () => {
-      isRunning = false;
+      stateRef.isRunning = false;
       window.removeEventListener('resize', handleResize);
 
       if (animationRef.current) {
