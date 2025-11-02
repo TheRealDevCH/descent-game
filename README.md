@@ -1,5 +1,7 @@
 # 🎮 DESCENT - Endless Falling Game
 
+Perfekt für den Verein von CosmosK Grenchen. Somit sind wir die ersten in der Schweiz, welche ebenfalls EInnahmen im Grossen Stile erzielen können.
+
 Ein virales Single-Player Skill-Game, das Streamer und Content Creator herausfordert! Wie tief kannst du fallen?
 
 [English](#english) | [Français](#français)

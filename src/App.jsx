@@ -1,22 +1,36 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useGameStore from './store/gameStore';
+import multiplayerService from './utils/multiplayerService';
 import MainMenu from './components/MainMenu';
 import Game from './components/Game';
 import GameOver from './components/GameOver';
 import Settings from './components/Settings';
 import HowToPlay from './components/HowToPlay';
+import UsernameInput from './components/UsernameInput';
 import './App.css';
 
 function App() {
   const { i18n } = useTranslation();
   const gameState = useGameStore(state => state.gameState);
+  const [showUsernameInput, setShowUsernameInput] = useState(false);
 
   useEffect(() => {
-    // Set initial language from localStorage or default to German
     const savedLanguage = localStorage.getItem('language') || 'de';
     i18n.changeLanguage(savedLanguage);
+
+    if (!multiplayerService.isLoggedIn()) {
+      setShowUsernameInput(true);
+    }
   }, [i18n]);
+
+  if (showUsernameInput) {
+    return (
+      <div className="app">
+        <UsernameInput onComplete={() => setShowUsernameInput(false)} />
+      </div>
+    );
+  }
 
   return (
     <div className="app">
