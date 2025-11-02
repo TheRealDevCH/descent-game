@@ -65,6 +65,30 @@ class MultiplayerManager {
     nameMesh.position.y = 0.8;
     group.add(nameMesh);
 
+    // Create health bar
+    const healthBarGroup = new THREE.Group();
+    healthBarGroup.position.y = 1.2;
+
+    // Health bar background (red)
+    const bgGeometry = new THREE.PlaneGeometry(2, 0.15);
+    const bgMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+    const bgMesh = new THREE.Mesh(bgGeometry, bgMaterial);
+    healthBarGroup.add(bgMesh);
+
+    // Health bar foreground (green) - will be updated
+    const healthGeometry = new THREE.PlaneGeometry(2, 0.15);
+    const healthMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    const healthMesh = new THREE.Mesh(healthGeometry, healthMaterial);
+    healthMesh.position.z = 0.01;
+    healthBarGroup.add(healthMesh);
+
+    // Store health mesh for updates
+    group.userData.healthMesh = healthMesh;
+    group.userData.maxHealth = 100;
+    group.userData.currentHealth = 100;
+
+    group.add(healthBarGroup);
+
     return group;
   }
 
@@ -108,6 +132,28 @@ class MultiplayerManager {
 
     player.mesh.position.x = playerData.position_x || 0;
     player.mesh.position.z = playerData.position_z || 5;
+  }
+
+  updatePlayerHealth(playerId, health) {
+    const player = this.otherPlayers.get(playerId);
+    if (!player || !player.mesh) return;
+
+    const healthPercent = Math.max(0, Math.min(100, health)) / 100;
+    player.mesh.userData.currentHealth = health;
+
+    if (player.mesh.userData.healthMesh) {
+      player.mesh.userData.healthMesh.scale.x = healthPercent;
+      player.mesh.userData.healthMesh.position.x = (1 - healthPercent);
+
+      // Change color based on health
+      if (health > 50) {
+        player.mesh.userData.healthMesh.material.color.setHex(0x00ff00); // Green
+      } else if (health > 25) {
+        player.mesh.userData.healthMesh.material.color.setHex(0xffff00); // Yellow
+      } else {
+        player.mesh.userData.healthMesh.material.color.setHex(0xff0000); // Red
+      }
+    }
   }
 
   removePlayer(playerId) {
