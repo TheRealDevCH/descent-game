@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import useGameStore from './store/gameStore';
 import multiplayerService from './utils/multiplayerService';
 import MainMenu from './components/MainMenu';
@@ -9,9 +10,10 @@ import Settings from './components/Settings';
 import HowToPlay from './components/HowToPlay';
 import UsernameInput from './components/UsernameInput';
 import CharacterCustomization from './components/CharacterCustomization';
+import AdminPanel from './components/AdminPanel';
 import './App.css';
 
-function App() {
+function GameApp() {
   const { i18n } = useTranslation();
   const gameState = useGameStore(state => state.gameState);
   const [showUsernameInput, setShowUsernameInput] = useState(false);
@@ -58,6 +60,18 @@ function App() {
       {(gameState === 'playing' || gameState === 'paused') && <Game />}
       {gameState === 'gameOver' && <GameOver />}
     </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/admin55" element={<AdminPanel />} />
+        <Route path="/" element={<GameApp />} />
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </Router>
   );
 }
 

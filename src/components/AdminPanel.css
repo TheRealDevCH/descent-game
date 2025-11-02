@@ -1,0 +1,255 @@
+.admin-login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 100%);
+  font-family: 'Arial', sans-serif;
+}
+
+.login-container {
+  background: rgba(255, 0, 128, 0.1);
+  border: 2px solid rgba(255, 0, 128, 0.5);
+  border-radius: 15px;
+  padding: 40px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 8px 32px rgba(255, 0, 128, 0.2);
+}
+
+.login-container h1 {
+  color: #ff0080;
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 28px;
+}
+
+.login-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.password-input {
+  padding: 12px 15px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 0, 128, 0.3);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 16px;
+}
+
+.password-input:focus {
+  outline: none;
+  border-color: #ff0080;
+  box-shadow: 0 0 10px rgba(255, 0, 128, 0.3);
+}
+
+.login-button {
+  padding: 12px;
+  background: linear-gradient(135deg, #ff0080, #ff6b9d);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.login-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 0, 128, 0.4);
+}
+
+.admin-panel {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 100%);
+  color: #fff;
+  font-family: 'Arial', sans-serif;
+  padding: 20px;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: rgba(255, 0, 128, 0.1);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 0, 128, 0.3);
+}
+
+.admin-header h1 {
+  color: #ff0080;
+  margin: 0;
+}
+
+.logout-button {
+  padding: 10px 20px;
+  background: rgba(255, 0, 128, 0.3);
+  border: 1px solid #ff0080;
+  border-radius: 8px;
+  color: #ff0080;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.logout-button:hover {
+  background: #ff0080;
+  color: white;
+}
+
+.admin-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid rgba(255, 0, 128, 0.2);
+}
+
+.tab-button {
+  padding: 12px 20px;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.tab-button.active {
+  color: #ff0080;
+  border-bottom-color: #ff0080;
+}
+
+.tab-button:hover {
+  color: #ff0080;
+}
+
+.admin-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.create-section {
+  background: rgba(255, 0, 128, 0.1);
+  border: 1px solid rgba(255, 0, 128, 0.3);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 30px;
+}
+
+.create-section h2 {
+  color: #ff0080;
+  margin-top: 0;
+}
+
+.create-section form {
+  display: flex;
+  gap: 10px;
+}
+
+.create-section input {
+  flex: 1;
+  padding: 10px 15px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 0, 128, 0.3);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+}
+
+.create-section input:focus {
+  outline: none;
+  border-color: #ff0080;
+}
+
+.create-section button {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #ff0080, #ff6b9d);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.create-section button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 0, 128, 0.4);
+}
+
+.list-section {
+  background: rgba(255, 0, 128, 0.05);
+  border: 1px solid rgba(255, 0, 128, 0.2);
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.list-section h2 {
+  color: #ff0080;
+  margin-top: 0;
+}
+
+.admin-list {
+  display: grid;
+  gap: 15px;
+}
+
+.admin-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 0, 128, 0.2);
+  border-radius: 8px;
+  padding: 15px;
+  transition: all 0.3s ease;
+}
+
+.admin-item:hover {
+  background: rgba(255, 0, 128, 0.1);
+  border-color: rgba(255, 0, 128, 0.4);
+}
+
+.item-info h3 {
+  margin: 0 0 8px 0;
+  color: #ff0080;
+}
+
+.item-info p {
+  margin: 5px 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+}
+
+.delete-button {
+  padding: 8px 16px;
+  background: rgba(255, 50, 50, 0.3);
+  border: 1px solid rgba(255, 50, 50, 0.6);
+  border-radius: 6px;
+  color: #ff3232;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.delete-button:hover {
+  background: rgba(255, 50, 50, 0.6);
+  color: white;
+}
+
+.error-message {
+  background: rgba(255, 50, 50, 0.2);
+  border: 1px solid rgba(255, 50, 50, 0.5);
+  color: #ff6b6b;
+  padding: 12px 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
