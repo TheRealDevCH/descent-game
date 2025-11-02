@@ -124,28 +124,35 @@ export default async function handler(req, res) {
     if (action === 'getActivePlayers') {
       const { serverId } = req.body;
 
-      let query = supabase
-        .from('active_players')
-        .select('*, players(username, character_skin)')
-        .gt('last_update', new Date(Date.now() - 5000).toISOString());
+      try {
+        // First, get all active players from the last 5 seconds
+        const { data: activePlayers, error: activeError } = await supabase
+          .from('active_players')
+          .select('*, players(username, character_skin, is_admin)')
+          .gt('last_update', new Date(Date.now() - 5000).toISOString());
 
-      // If serverId is provided, only get players from that server
-      if (serverId) {
-        query = query.in('player_id',
-          supabase
+        if (activeError) throw activeError;
+
+        // If serverId is provided, filter by server
+        if (serverId) {
+          const { data: serverPlayerIds, error: serverError } = await supabase
             .from('server_players')
             .select('player_id')
-            .eq('server_id', serverId)
-        );
-      }
+            .eq('server_id', serverId);
 
-      const { data, error } = await query;
+          if (serverError) throw serverError;
 
-      if (error) {
+          const validPlayerIds = new Set(serverPlayerIds.map(sp => sp.player_id));
+          const filteredPlayers = activePlayers.filter(p => validPlayerIds.has(p.player_id));
+
+          return res.status(200).json({ players: filteredPlayers });
+        }
+
+        return res.status(200).json({ players: activePlayers || [] });
+      } catch (error) {
+        console.error('Error in getActivePlayers:', error);
         return res.status(400).json({ error: error.message });
       }
-
-      return res.status(200).json({ players: data });
     }
 
     if (action === 'updateHighscore') {
