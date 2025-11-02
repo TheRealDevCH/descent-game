@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import './ServerBrowser.css';
 
-function ServerBrowser({ onJoin, onBack }) {
+function ServerBrowser({ onServerSelected, onBack }) {
   const [servers, setServers] = useState([]);
   const [showCreateServer, setShowCreateServer] = useState(false);
   const [showJoinPrivate, setShowJoinPrivate] = useState(false);
   const [serverName, setServerName] = useState('');
   const [inviteCode, setInviteCode] = useState('');
   const [isPrivate, setIsPrivate] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchServers();
@@ -28,6 +30,9 @@ function ServerBrowser({ onJoin, onBack }) {
   const handleCreateServer = async () => {
     if (!serverName.trim()) return;
 
+    setLoading(true);
+    setError(null);
+
     try {
       const response = await fetch('/api/servers', {
         method: 'POST',
@@ -40,19 +45,30 @@ function ServerBrowser({ onJoin, onBack }) {
 
       const data = await response.json();
       if (data.success) {
-        onJoin(data.serverId, data.inviteCode);
+        setShowCreateServer(false);
+        setServerName('');
+        setIsPrivate(false);
+        onServerSelected(data.serverId);
+      } else {
+        setError(data.error || 'Failed to create server');
       }
     } catch (error) {
       console.error('Error creating server:', error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleJoinServer = (serverId) => {
-    onJoin(serverId, null);
+    onServerSelected(serverId);
   };
 
   const handleJoinPrivate = async () => {
     if (!inviteCode.trim()) return;
+
+    setLoading(true);
+    setError(null);
 
     try {
       const response = await fetch('/api/servers/join', {
@@ -63,10 +79,17 @@ function ServerBrowser({ onJoin, onBack }) {
 
       const data = await response.json();
       if (data.success) {
-        onJoin(data.serverId, null);
+        setShowJoinPrivate(false);
+        setInviteCode('');
+        onServerSelected(data.serverId);
+      } else {
+        setError(data.error || 'Failed to join server');
       }
     } catch (error) {
       console.error('Error joining server:', error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -76,18 +99,21 @@ function ServerBrowser({ onJoin, onBack }) {
         <div className="modal-overlay">
           <div className="modal-content">
             <h2>Create Server</h2>
+            {error && <div className="error-message">{error}</div>}
             <input
               type="text"
               placeholder="Server Name"
               value={serverName}
               onChange={(e) => setServerName(e.target.value)}
               className="input-field"
+              disabled={loading}
             />
             <label className="checkbox-label">
               <input
                 type="checkbox"
                 checked={isPrivate}
                 onChange={(e) => setIsPrivate(e.target.checked)}
+                disabled={loading}
               />
               Private Server
             </label>
@@ -95,12 +121,17 @@ function ServerBrowser({ onJoin, onBack }) {
               <button
                 className="button button-play"
                 onClick={handleCreateServer}
+                disabled={loading || !serverName.trim()}
               >
-                Create
+                {loading ? 'Creating...' : 'Create'}
               </button>
               <button
                 className="button button-secondary"
-                onClick={() => setShowCreateServer(false)}
+                onClick={() => {
+                  setShowCreateServer(false);
+                  setError(null);
+                }}
+                disabled={loading}
               >
                 Cancel
               </button>
@@ -117,23 +148,30 @@ function ServerBrowser({ onJoin, onBack }) {
         <div className="modal-overlay">
           <div className="modal-content">
             <h2>Join Private Server</h2>
+            {error && <div className="error-message">{error}</div>}
             <input
               type="text"
               placeholder="Invite Code"
               value={inviteCode}
               onChange={(e) => setInviteCode(e.target.value)}
               className="input-field"
+              disabled={loading}
             />
             <div className="modal-buttons">
               <button
                 className="button button-play"
                 onClick={handleJoinPrivate}
+                disabled={loading || !inviteCode.trim()}
               >
-                Join
+                {loading ? 'Joining...' : 'Join'}
               </button>
               <button
                 className="button button-secondary"
-                onClick={() => setShowJoinPrivate(false)}
+                onClick={() => {
+                  setShowJoinPrivate(false);
+                  setError(null);
+                }}
+                disabled={loading}
               >
                 Cancel
               </button>
@@ -175,7 +213,10 @@ function ServerBrowser({ onJoin, onBack }) {
           servers.map((server) => (
             <div key={server.id} className="server-item">
               <div className="server-info">
-                <h3>{server.name}</h3>
+                <div className="server-name-row">
+                  <h3>{server.name}</h3>
+                  {server.isPrivate && <span className="lock-icon">🔒</span>}
+                </div>
                 <p>{server.playerCount}/{server.maxPlayers} Players</p>
               </div>
               <button

@@ -64,16 +64,27 @@
   flex: 1;
 }
 
+.server-name-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .server-info h3 {
   font-size: 24px;
   color: #fff;
-  margin: 0 0 10px 0;
+  margin: 0;
+}
+
+.lock-icon {
+  font-size: 20px;
+  color: #ffd700;
 }
 
 .server-info p {
   font-size: 16px;
   color: rgba(255, 255, 255, 0.7);
-  margin: 0;
+  margin: 10px 0 0 0;
 }
 
 .no-servers {
@@ -156,5 +167,26 @@
 
 .modal-buttons .button {
   flex: 1;
+}
+
+.error-message {
+  background: rgba(255, 0, 0, 0.2);
+  border: 2px solid rgba(255, 0, 0, 0.6);
+  color: #ff6b6b;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.input-field:disabled,
+.checkbox-label input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
