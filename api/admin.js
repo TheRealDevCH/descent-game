@@ -16,28 +16,43 @@ export default async function handler(req, res) {
 
   try {
     if (action === 'getServers') {
-      const { data: servers, error } = await supabase
-        .from('servers')
-        .select('*');
+      try {
+        const { data: servers, error } = await supabase
+          .from('servers')
+          .select('*');
 
-      if (error) throw error;
+        if (error) throw error;
 
-      // Get player count for each server
-      const serversWithCount = await Promise.all(
-        servers.map(async (server) => {
-          const { count } = await supabase
-            .from('server_players')
-            .select('*', { count: 'exact', head: true })
-            .eq('server_id', server.id);
+        // Get player count for each server
+        const serversWithCount = await Promise.all(
+          (servers || []).map(async (server) => {
+            try {
+              const { count, error: countError } = await supabase
+                .from('server_players')
+                .select('id', { count: 'exact', head: true })
+                .eq('server_id', server.id);
 
-          return {
-            ...server,
-            playerCount: count || 0
-          };
-        })
-      );
+              if (countError) {
+                console.error('Count error:', countError);
+                return { ...server, playerCount: 0 };
+              }
 
-      return res.status(200).json({ servers: serversWithCount });
+              return {
+                ...server,
+                playerCount: count || 0
+              };
+            } catch (err) {
+              console.error('Error counting players for server:', err);
+              return { ...server, playerCount: 0 };
+            }
+          })
+        );
+
+        return res.status(200).json({ servers: serversWithCount });
+      } catch (err) {
+        console.error('Error in getServers:', err);
+        return res.status(500).json({ error: err.message });
+      }
     }
 
     if (action === 'deleteServer') {
