@@ -4,6 +4,7 @@ import useGameStore from '../store/gameStore';
 import audioSystem from '../utils/audioSystem';
 import Shop from './Shop';
 import CharacterEditor from './CharacterEditor';
+import GameModeSelection from './GameModeSelection';
 import MainMenuBackground from './MainMenuBackground';
 import './MainMenu.css';
 
@@ -11,6 +12,7 @@ function MainMenu() {
   const { t } = useTranslation();
   const [showShop, setShowShop] = useState(false);
   const [showCharacterEditor, setShowCharacterEditor] = useState(false);
+  const [showGameModeSelection, setShowGameModeSelection] = useState(false);
   const startGame = useGameStore(state => state.startGame);
 
   useEffect(() => {
@@ -29,12 +31,7 @@ function MainMenu() {
 
   const handlePlay = () => {
     audioSystem.playSound('click');
-
-    if (audioSystem.menuMusic && audioSystem.menuMusic.paused) {
-      audioSystem.playMenuMusic();
-    }
-
-    startGame();
+    setShowGameModeSelection(true);
   };
 
   const handleSettings = () => {
@@ -56,6 +53,10 @@ function MainMenu() {
     audioSystem.playSound('click');
     setShowCharacterEditor(true);
   };
+
+  if (showGameModeSelection) {
+    return <GameModeSelection />;
+  }
 
   if (showShop) {
     return <Shop onClose={() => setShowShop(false)} />;
