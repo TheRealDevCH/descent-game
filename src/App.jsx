@@ -8,12 +8,14 @@ import GameOver from './components/GameOver';
 import Settings from './components/Settings';
 import HowToPlay from './components/HowToPlay';
 import UsernameInput from './components/UsernameInput';
+import CharacterCustomization from './components/CharacterCustomization';
 import './App.css';
 
 function App() {
   const { i18n } = useTranslation();
   const gameState = useGameStore(state => state.gameState);
   const [showUsernameInput, setShowUsernameInput] = useState(false);
+  const [showCharacterCustomization, setShowCharacterCustomization] = useState(false);
 
   useEffect(() => {
     const savedLanguage = localStorage.getItem('language') || 'de';
@@ -21,6 +23,8 @@ function App() {
 
     if (!multiplayerService.isLoggedIn()) {
       setShowUsernameInput(true);
+    } else if (!localStorage.getItem('characterCustomized')) {
+      setShowCharacterCustomization(true);
     }
   }, [i18n]);
 
@@ -28,6 +32,20 @@ function App() {
     return (
       <div className="app">
         <UsernameInput onComplete={() => setShowUsernameInput(false)} />
+      </div>
+    );
+  }
+
+  if (showCharacterCustomization) {
+    return (
+      <div className="app">
+        <CharacterCustomization
+          username={multiplayerService.username}
+          onComplete={() => {
+            localStorage.setItem('characterCustomized', 'true');
+            setShowCharacterCustomization(false);
+          }}
+        />
       </div>
     );
   }
