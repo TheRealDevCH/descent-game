@@ -5,6 +5,7 @@ import ParticleSystem from './ParticleSystem';
 import MultiplayerManager from './MultiplayerManager';
 import PlayerRenderer from './PlayerRenderer';
 import MusicSyncManager from './MusicSyncManager';
+import PowerupSystem from './PowerupSystem';
 
 class GameEngine {
   constructor(container, gameStore, audioSystem) {
@@ -21,6 +22,7 @@ class GameEngine {
     this.multiplayerManager = null;
     this.playerRenderer = null;
     this.musicSyncManager = null;
+    this.powerupSystem = null;
 
     this.playerSpeed = 0;
     this.playerVelocityX = 0;
@@ -69,6 +71,7 @@ class GameEngine {
     this.particleSystem = new ParticleSystem(this.scene);
     this.multiplayerManager = new MultiplayerManager(this.scene);
     this.musicSyncManager = new MusicSyncManager(this.audioSystem);
+    this.powerupSystem = new PowerupSystem(this.scene);
 
     const playerColor = localStorage.getItem('characterColor') || '#ff0080';
     this.playerRenderer = new PlayerRenderer(this.scene, playerColor);
@@ -143,6 +146,25 @@ class GameEngine {
 
     this.particleSystem.update(this.camera.position, this.playerSpeed);
 
+    // Powerup System
+    if (this.powerupSystem) {
+      this.powerupSystem.update();
+
+      // Spawn powerups randomly
+      if (Math.random() < 0.001) {
+        const randomX = (Math.random() - 0.5) * 6;
+        const randomZ = this.camera.position.z - 20;
+        this.powerupSystem.spawnPowerup(new THREE.Vector3(randomX, 0, randomZ));
+      }
+
+      // Check powerup collision
+      const collectedPowerupId = this.powerupSystem.checkPowerupCollision(playerWorldX, playerWorldZ);
+      if (collectedPowerupId) {
+        this.powerupSystem.collectPowerup('player', collectedPowerupId);
+        this.audioSystem.playSound('powerup');
+      }
+    }
+
     if (this.playerRenderer) {
       this.playerRenderer.update(state.playerX, playerWorldZ, newDepth);
     }
@@ -210,6 +232,7 @@ class GameEngine {
     if (this.particleSystem) this.particleSystem.dispose();
     if (this.multiplayerManager) this.multiplayerManager.dispose();
     if (this.playerRenderer) this.playerRenderer.dispose();
+    if (this.powerupSystem) this.powerupSystem.dispose();
   }
 }
 
