@@ -46,6 +46,11 @@ function GameModeSelection() {
     setSelectedMode('multiplayer');
   };
 
+  const handleBackToMenu = () => {
+    audioSystem.playSound('click');
+    useGameStore.setState({ gameState: 'menu' });
+  };
+
   if (selectedMode === 'lobby' && selectedServer) {
     return (
       <Lobby
@@ -69,8 +74,13 @@ function GameModeSelection() {
   return (
     <div className="game-mode-selection">
       <div className="mode-container">
-        <h1 className="selection-title">SELECT GAME MODE</h1>
-        
+        <div className="selection-header">
+          <h1 className="selection-title">SELECT GAME MODE</h1>
+          <button className="button button-secondary" onClick={handleBackToMenu}>
+            ← BACK
+          </button>
+        </div>
+
         <div className="modes-grid">
           {/* SINGLEPLAYER */}
           <button 

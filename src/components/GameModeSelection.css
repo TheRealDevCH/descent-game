@@ -18,6 +18,14 @@
   align-items: center;
 }
 
+.selection-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
 .selection-title {
   font-size: clamp(40px, 8vw, 80px);
   font-weight: 900;
@@ -30,6 +38,7 @@
   text-transform: uppercase;
   margin: 0;
   text-align: center;
+  flex: 1;
 }
 
 .modes-grid {
