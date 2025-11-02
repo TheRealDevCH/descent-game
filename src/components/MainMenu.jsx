@@ -3,18 +3,18 @@ import { useTranslation } from 'react-i18next';
 import useGameStore from '../store/gameStore';
 import audioSystem from '../utils/audioSystem';
 import Shop from './Shop';
+import CharacterEditor from './CharacterEditor';
 import './MainMenu.css';
 
 function MainMenu() {
   const { t } = useTranslation();
   const [showShop, setShowShop] = useState(false);
+  const [showCharacterEditor, setShowCharacterEditor] = useState(false);
   const startGame = useGameStore(state => state.startGame);
 
-  // Play menu music when component mounts
   useEffect(() => {
     audioSystem.init();
 
-    // Try to play menu music, but it might be blocked by browser
     const playPromise = audioSystem.playMenuMusic();
     if (playPromise) {
       playPromise.catch(err => {
@@ -23,14 +23,12 @@ function MainMenu() {
     }
 
     return () => {
-      // Don't stop music on unmount - let Game component handle it
     };
   }, []);
 
   const handlePlay = () => {
     audioSystem.playSound('click');
 
-    // Try to start menu music on user interaction if it wasn't playing
     if (audioSystem.menuMusic && audioSystem.menuMusic.paused) {
       audioSystem.playMenuMusic();
     }
@@ -53,8 +51,17 @@ function MainMenu() {
     setShowShop(true);
   };
 
+  const handleCharacterEditor = () => {
+    audioSystem.playSound('click');
+    setShowCharacterEditor(true);
+  };
+
   if (showShop) {
     return <Shop onClose={() => setShowShop(false)} />;
+  }
+
+  if (showCharacterEditor) {
+    return <CharacterEditor onClose={() => setShowCharacterEditor(false)} />;
   }
 
   return (
@@ -68,6 +75,9 @@ function MainMenu() {
         <div className="menu-buttons">
           <button className="button button-play" onClick={handlePlay}>
             {t('menu.play')}
+          </button>
+          <button className="button button-secondary" onClick={handleCharacterEditor}>
+            👤 CHARACTER
           </button>
           <button className="button button-secondary" onClick={handleShop}>
             🛍️ SHOP
