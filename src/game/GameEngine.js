@@ -2,24 +2,26 @@ import * as THREE from 'three';
 import TunnelGenerator from './TunnelGenerator';
 import ObstacleManager from './ObstacleManager';
 import ParticleSystem from './ParticleSystem';
+import MultiplayerManager from './MultiplayerManager';
 
 class GameEngine {
   constructor(container, gameStore, audioSystem) {
     this.container = container;
     this.gameStore = gameStore;
     this.audioSystem = audioSystem;
-    
+
     this.scene = null;
     this.camera = null;
     this.renderer = null;
     this.tunnelGenerator = null;
     this.obstacleManager = null;
     this.particleSystem = null;
-    
+    this.multiplayerManager = null;
+
     this.playerSpeed = 0;
     this.playerVelocityX = 0;
     this.cameraShake = 0;
-    
+
     this.init();
   }
 
@@ -56,19 +58,13 @@ class GameEngine {
     directionalLight.position.set(0, 10, 10);
     this.scene.add(directionalLight);
     
-    // Game components
     this.tunnelGenerator = new TunnelGenerator(this.scene);
     this.obstacleManager = new ObstacleManager(this.scene, this.audioSystem, this.gameStore);
     this.particleSystem = new ParticleSystem(this.scene);
+    this.multiplayerManager = new MultiplayerManager(this.scene);
 
-    console.log('GameEngine initialized');
-    console.log('Camera position:', this.camera.position);
-    console.log('Tunnel segments:', this.tunnelGenerator.segments.length);
-
-    // Event listeners
     window.addEventListener('resize', this.onWindowResize.bind(this));
 
-    // Start animation loop
     this.animate();
   }
 
@@ -85,51 +81,51 @@ class GameEngine {
   }
 
   update(state) {
-    const deltaTime = 0.016; // Approximate 60fps
-    
-    // Update depth
+    const deltaTime = 0.016;
+
     this.playerSpeed = state.speed * 10;
     const newDepth = state.depth + this.playerSpeed * deltaTime;
     this.gameStore.getState().updateDepth(newDepth);
-    
-    // Update camera position (falling effect)
+
     this.camera.position.z -= this.playerSpeed * deltaTime;
 
-    // Dynamic camera tilt based on speed for more intensity
     const speedFactor = Math.min(state.speed / 5, 1);
     this.camera.rotation.z = this.playerVelocityX * 0.05 * speedFactor;
 
-    // Update player horizontal movement - MORE RESPONSIVE
     const targetX = state.playerX * 3;
-    this.playerVelocityX += (targetX - this.camera.position.x) * 0.15; // was 0.1
-    this.playerVelocityX *= 0.85; // was 0.9 - less damping = more responsive
+    this.playerVelocityX += (targetX - this.camera.position.x) * 0.15;
+    this.playerVelocityX *= 0.85;
     this.camera.position.x += this.playerVelocityX * deltaTime;
-    
-    // Camera shake effect
+
     if (this.cameraShake > 0) {
       this.camera.position.x += (Math.random() - 0.5) * this.cameraShake;
       this.camera.position.y += (Math.random() - 0.5) * this.cameraShake;
       this.cameraShake *= 0.9;
     }
-    
-    // Update tunnel
+
     this.tunnelGenerator.update(this.camera.position.z, newDepth);
-    
-    // Update obstacles
+
     const collision = this.obstacleManager.update(
       this.camera.position.z,
       this.camera.position.x,
       newDepth
     );
-    
+
     if (collision) {
       this.handleCollision();
     }
-    
-    // Update particles
+
     this.particleSystem.update(this.camera.position, this.playerSpeed);
-    
-    // Check for milestones
+
+    if (this.multiplayerManager) {
+      this.multiplayerManager.update(
+        state.playerX,
+        this.camera.position.z,
+        newDepth,
+        state.speed
+      );
+    }
+
     this.checkMilestones(state);
   }
 
@@ -168,19 +164,21 @@ class GameEngine {
     if (this.tunnelGenerator) this.tunnelGenerator.reset();
     if (this.obstacleManager) this.obstacleManager.reset();
     if (this.particleSystem) this.particleSystem.reset();
+    if (this.multiplayerManager) this.multiplayerManager.startSync();
   }
 
   dispose() {
     window.removeEventListener('resize', this.onWindowResize.bind(this));
-    
+
     if (this.renderer) {
       this.renderer.dispose();
       this.container.removeChild(this.renderer.domElement);
     }
-    
+
     if (this.tunnelGenerator) this.tunnelGenerator.dispose();
     if (this.obstacleManager) this.obstacleManager.dispose();
     if (this.particleSystem) this.particleSystem.dispose();
+    if (this.multiplayerManager) this.multiplayerManager.dispose();
   }
 }
 
