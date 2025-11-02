@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import useGameStore from '../store/gameStore';
 import GameEngine from '../game/GameEngine';
 import audioSystem from '../utils/audioSystem';
+import multiplayerService from '../utils/multiplayerService';
 import PowerupUI from './PowerupUI';
 import './Game.css';
 
@@ -11,7 +12,8 @@ function Game() {
   const containerRef = useRef(null);
   const engineRef = useRef(null);
   const [showMilestone, setShowMilestone] = useState(null);
-  
+  const [serverId, setServerId] = useState(null);
+
   const gameState = useGameStore(state => state.gameState);
   const depth = useGameStore(state => state.depth);
   const speed = useGameStore(state => state.speed);
@@ -19,6 +21,19 @@ function Game() {
   const pauseGame = useGameStore(state => state.pauseGame);
   const returnToMenu = useGameStore(state => state.returnToMenu);
   const updatePlayerX = useGameStore(state => state.updatePlayerX);
+
+  // Get serverId from localStorage
+  useEffect(() => {
+    const id = localStorage.getItem('serverId');
+    setServerId(id);
+  }, []);
+
+  // Register player in server when game starts
+  useEffect(() => {
+    if (gameState === 'playing' && serverId && multiplayerService.playerId) {
+      multiplayerService.joinServer(serverId);
+    }
+  }, [gameState, serverId]);
 
   // Initialize game engine once
   useEffect(() => {
@@ -29,7 +44,8 @@ function Game() {
     engineRef.current = new GameEngine(
       containerRef.current,
       useGameStore,
-      audioSystem
+      audioSystem,
+      serverId
     );
 
     return () => {
@@ -39,7 +55,7 @@ function Game() {
       }
       audioSystem.stopMusic();
     };
-  }, []);
+  }, [serverId]);
 
   // Handle game state changes
   useEffect(() => {

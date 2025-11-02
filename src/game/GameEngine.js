@@ -8,10 +8,11 @@ import MusicSyncManager from './MusicSyncManager';
 import PowerupSystem from './PowerupSystem';
 
 class GameEngine {
-  constructor(container, gameStore, audioSystem) {
+  constructor(container, gameStore, audioSystem, serverId = null) {
     this.container = container;
     this.gameStore = gameStore;
     this.audioSystem = audioSystem;
+    this.serverId = serverId;
 
     this.scene = null;
     this.camera = null;

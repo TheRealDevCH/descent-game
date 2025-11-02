@@ -78,11 +78,48 @@ export default async function handler(req, res) {
       return res.status(200).json({ success: true });
     }
 
-    if (action === 'getActivePlayers') {
+    if (action === 'joinServer') {
+      const { playerId, serverId } = req.body;
+
+      if (!playerId || !serverId) {
+        return res.status(400).json({ error: 'Player ID and Server ID required' });
+      }
+
       const { data, error } = await supabase
+        .from('server_players')
+        .upsert({
+          server_id: serverId,
+          player_id: playerId,
+          joined_at: new Date().toISOString()
+        }, { onConflict: 'server_id,player_id' })
+        .select();
+
+      if (error) {
+        return res.status(400).json({ error: error.message });
+      }
+
+      return res.status(200).json({ success: true });
+    }
+
+    if (action === 'getActivePlayers') {
+      const { serverId } = req.body;
+
+      let query = supabase
         .from('active_players')
         .select('*, players(username, character_skin)')
         .gt('last_update', new Date(Date.now() - 5000).toISOString());
+
+      // If serverId is provided, only get players from that server
+      if (serverId) {
+        query = query.in('player_id',
+          supabase
+            .from('server_players')
+            .select('player_id')
+            .eq('server_id', serverId)
+        );
+      }
+
+      const { data, error } = await query;
 
       if (error) {
         return res.status(400).json({ error: error.message });

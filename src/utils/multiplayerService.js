@@ -5,6 +5,7 @@ class MultiplayerService {
     this.playerId = localStorage.getItem('playerId');
     this.username = localStorage.getItem('username');
     this.characterSkin = localStorage.getItem('characterSkin') || 'classic';
+    this.serverId = localStorage.getItem('serverId');
     this.activePlayers = [];
     this.updateInterval = null;
   }
@@ -63,12 +64,43 @@ class MultiplayerService {
     }
   }
 
+  async joinServer(serverId) {
+    if (!this.playerId || !serverId) return;
+
+    try {
+      const response = await fetch(`${API_URL}/multiplayer`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'joinServer',
+          playerId: this.playerId,
+          serverId: serverId
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to join server');
+      }
+
+      this.serverId = serverId;
+      localStorage.setItem('serverId', serverId);
+      return data;
+    } catch (error) {
+      console.error('Error joining server:', error);
+    }
+  }
+
   async getActivePlayers() {
     try {
       const response = await fetch(`${API_URL}/multiplayer`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'getActivePlayers' })
+        body: JSON.stringify({
+          action: 'getActivePlayers',
+          serverId: this.serverId
+        })
       });
 
       const data = await response.json();
