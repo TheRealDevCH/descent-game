@@ -6,10 +6,12 @@ class ObstacleManager {
     this.audioSystem = audioSystem;
     this.gameStore = gameStore;
     this.obstacles = [];
-    this.spawnDistance = 40; // Distance between spawns
-    this.spawnAheadDistance = 200; // How far ahead to spawn obstacles
-    this.lastSpawnZ = 5; // Start at camera position
+    this.spawnDistance = 40;
+    this.spawnAheadDistance = 200;
+    this.lastSpawnZ = 5;
     this.collisionRadius = 0.8;
+    this.spawnDelay = 0;
+    this.spawnDelayMax = 120;
   }
 
   createObstacle(zPosition, depth) {
@@ -184,13 +186,15 @@ class ObstacleManager {
   }
 
   update(cameraZ, cameraX, depth) {
-    // Spawn new obstacles FAR ahead so player has time to react
-    // Only spawn if we haven't spawned yet at this position
+    if (this.spawnDelay > 0) {
+      this.spawnDelay--;
+      return false;
+    }
+
     while (cameraZ < this.lastSpawnZ - this.spawnDistance) {
-      const spawnZ = this.lastSpawnZ - this.spawnAheadDistance; // Spawn 200 units AHEAD
-      console.log('Spawning obstacle at Z:', spawnZ, 'Camera at Z:', cameraZ, 'Depth:', depth);
+      const spawnZ = this.lastSpawnZ - this.spawnAheadDistance;
       this.createObstacle(spawnZ, depth);
-      this.lastSpawnZ -= this.spawnDistance; // Move spawn trigger further
+      this.lastSpawnZ -= this.spawnDistance;
     }
     
     // Update and check collisions
@@ -303,7 +307,8 @@ class ObstacleManager {
     });
 
     this.obstacles = [];
-    this.lastSpawnZ = 5; // Reset to camera start position
+    this.lastSpawnZ = 5;
+    this.spawnDelay = this.spawnDelayMax;
   }
 
   dispose() {
