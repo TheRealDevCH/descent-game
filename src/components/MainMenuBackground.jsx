@@ -7,12 +7,7 @@ import audioSystem from '../utils/audioSystem';
 
 function MainMenuBackground() {
   const containerRef = useRef(null);
-  const sceneRef = useRef(null);
-  const cameraRef = useRef(null);
-  const rendererRef = useRef(null);
-  const tunnelRef = useRef(null);
-  const obstacleRef = useRef(null);
-  const particleRef = useRef(null);
+  const animationRef = useRef(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -40,18 +35,14 @@ function MainMenuBackground() {
     });
     const particleSystem = new ParticleSystem(scene);
 
-    sceneRef.current = scene;
-    cameraRef.current = camera;
-    rendererRef.current = renderer;
-    tunnelRef.current = tunnelGenerator;
-    obstacleRef.current = obstacleManager;
-    particleRef.current = particleSystem;
-
     let depth = 0;
     let cameraZ = 8;
+    let isRunning = true;
 
     const animate = () => {
-      requestAnimationFrame(animate);
+      if (!isRunning) return;
+
+      animationRef.current = requestAnimationFrame(animate);
 
       depth += 0.5;
       cameraZ -= 0.5;
@@ -77,10 +68,17 @@ function MainMenuBackground() {
     window.addEventListener('resize', handleResize);
 
     return () => {
+      isRunning = false;
       window.removeEventListener('resize', handleResize);
+
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+
       if (containerRef.current && renderer.domElement.parentNode === containerRef.current) {
         containerRef.current.removeChild(renderer.domElement);
       }
+
       renderer.dispose();
       tunnelGenerator.dispose();
       obstacleManager.dispose();
