@@ -4,6 +4,7 @@ import ObstacleManager from './ObstacleManager';
 import ParticleSystem from './ParticleSystem';
 import MultiplayerManager from './MultiplayerManager';
 import PlayerRenderer from './PlayerRenderer';
+import MusicSyncManager from './MusicSyncManager';
 
 class GameEngine {
   constructor(container, gameStore, audioSystem) {
@@ -19,6 +20,7 @@ class GameEngine {
     this.particleSystem = null;
     this.multiplayerManager = null;
     this.playerRenderer = null;
+    this.musicSyncManager = null;
 
     this.playerSpeed = 0;
     this.playerVelocityX = 0;
@@ -66,6 +68,7 @@ class GameEngine {
     this.obstacleManager = new ObstacleManager(this.scene, this.audioSystem, this.gameStore);
     this.particleSystem = new ParticleSystem(this.scene);
     this.multiplayerManager = new MultiplayerManager(this.scene);
+    this.musicSyncManager = new MusicSyncManager(this.audioSystem);
 
     const playerColor = localStorage.getItem('characterColor') || '#ff0080';
     this.playerRenderer = new PlayerRenderer(this.scene, playerColor);
@@ -89,6 +92,12 @@ class GameEngine {
 
   update(state) {
     const deltaTime = 0.016;
+
+    if (this.musicSyncManager) {
+      this.musicSyncManager.update();
+      const musicShake = this.musicSyncManager.getCameraShakeIntensity();
+      this.cameraShake += musicShake * 0.1;
+    }
 
     this.playerSpeed = state.speed * 10;
     const newDepth = state.depth + this.playerSpeed * deltaTime;
