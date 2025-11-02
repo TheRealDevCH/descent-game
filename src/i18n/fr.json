@@ -1,0 +1,55 @@
+{
+  "menu": {
+    "title": "DESCENT",
+    "subtitle": "Jusqu'où peux-tu tomber?",
+    "play": "Jouer",
+    "settings": "Paramètres",
+    "howToPlay": "Comment Jouer"
+  },
+  "game": {
+    "depth": "Profondeur",
+    "speed": "Vitesse",
+    "paused": "EN PAUSE",
+    "resume": "Reprendre",
+    "restart": "Recommencer",
+    "mainMenu": "Menu Principal"
+  },
+  "gameOver": {
+    "title": "GAME OVER",
+    "yourDepth": "Ta Profondeur",
+    "personalBest": "Record Personnel",
+    "newRecord": "NOUVEAU RECORD!",
+    "playAgain": "Rejouer",
+    "mainMenu": "Menu Principal"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "language": "Langue",
+    "music": "Musique",
+    "soundEffects": "Effets Sonores",
+    "back": "Retour",
+    "on": "Activé",
+    "off": "Désactivé"
+  },
+  "howToPlay": {
+    "title": "Comment Jouer",
+    "description": "Tombe sans fin à travers le tunnel et évite les obstacles!",
+    "controls": "Contrôles",
+    "desktop": "Desktop: Flèches ← → ou A/D",
+    "mobile": "Mobile: Tape à gauche/droite sur l'écran",
+    "objective": "Objectif: Survie le plus longtemps possible et atteins la plus grande profondeur!",
+    "tips": "Conseils",
+    "tip1": "Plus tu tombes profondément, plus tu vas vite",
+    "tip2": "Collecte des power-ups pour des avantages temporaires",
+    "tip3": "Tous les 1000m, la couleur du tunnel change",
+    "back": "Retour"
+  },
+  "milestones": {
+    "depth1000": "1 000m atteints!",
+    "depth2000": "2 000m atteints!",
+    "depth5000": "5 000m atteints!",
+    "depth10000": "10 000m atteints!",
+    "speedUp": "Vitesse augmentée!"
+  }
+}
+

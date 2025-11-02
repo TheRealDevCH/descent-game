@@ -1,0 +1,137 @@
+.game-over {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #0a0015 0%, #1a0030 50%, #0a0015 100%);
+}
+
+.game-over-content {
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  align-items: center;
+  text-align: center;
+  max-width: 900px;
+  padding: 20px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.game-over-title {
+  font-size: 80px;
+  font-weight: 900;
+  letter-spacing: 6px;
+  background: linear-gradient(135deg, #ff0080 0%, #ff0000 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 60px rgba(255, 0, 128, 1)) drop-shadow(0 0 120px rgba(255, 0, 0, 1)) drop-shadow(0 8px 20px rgba(0, 0, 0, 1));
+  text-transform: uppercase;
+}
+
+.new-record {
+}
+
+.new-record h2 {
+  font-size: 48px;
+  font-weight: 900;
+  background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-transform: uppercase;
+  letter-spacing: 5px;
+  filter: drop-shadow(0 0 40px rgba(255, 215, 0, 1)) drop-shadow(0 0 80px rgba(255, 140, 0, 1)) drop-shadow(0 4px 12px rgba(0, 0, 0, 1));
+}
+
+.stats {
+  display: flex;
+  gap: 40px;
+  align-items: center;
+  width: 100%;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+.stat-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 0 0 10px rgba(255, 0, 128, 0.8);
+}
+
+.stat-value {
+  font-size: 40px;
+  font-weight: 900;
+  background: linear-gradient(135deg, #fff 0%, #ff0080 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8));
+}
+
+.stat-value.highlight {
+  background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
+}
+
+.stat-divider {
+  width: 2px;
+  height: 50px;
+  background: linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.5) 50%, transparent 100%);
+}
+
+.game-over-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.button-play {
+  background: linear-gradient(135deg, #ff0080 0%, #ff8c00 100%);
+  box-shadow: 0 8px 30px rgba(255, 0, 128, 0.8), 0 0 60px rgba(255, 140, 0, 0.6);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+/* Background particles */
+.background-particles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  background: radial-gradient(circle, #ff0080 0%, transparent 70%);
+  border-radius: 50%;
+  opacity: 0.8;
+  box-shadow: 0 0 20px rgba(255, 0, 128, 0.8);
+}
+
+/* Removed mobile styles - PC only game */
+

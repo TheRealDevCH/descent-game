@@ -1,0 +1,55 @@
+{
+  "menu": {
+    "title": "DESCENT",
+    "subtitle": "How deep can you fall?",
+    "play": "Play",
+    "settings": "Settings",
+    "howToPlay": "How to Play"
+  },
+  "game": {
+    "depth": "Depth",
+    "speed": "Speed",
+    "paused": "PAUSED",
+    "resume": "Resume",
+    "restart": "Restart",
+    "mainMenu": "Main Menu"
+  },
+  "gameOver": {
+    "title": "GAME OVER",
+    "yourDepth": "Your Depth",
+    "personalBest": "Personal Best",
+    "newRecord": "NEW RECORD!",
+    "playAgain": "Play Again",
+    "mainMenu": "Main Menu"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "music": "Music",
+    "soundEffects": "Sound Effects",
+    "back": "Back",
+    "on": "On",
+    "off": "Off"
+  },
+  "howToPlay": {
+    "title": "How to Play",
+    "description": "Fall endlessly through the tunnel and dodge obstacles!",
+    "controls": "Controls",
+    "desktop": "Desktop: Arrow keys ← → or A/D",
+    "mobile": "Mobile: Tap left/right on the screen",
+    "objective": "Objective: Survive as long as possible and reach the greatest depth!",
+    "tips": "Tips",
+    "tip1": "The deeper you fall, the faster you go",
+    "tip2": "Collect power-ups for temporary advantages",
+    "tip3": "Every 1000m the tunnel color changes",
+    "back": "Back"
+  },
+  "milestones": {
+    "depth1000": "1,000m reached!",
+    "depth2000": "2,000m reached!",
+    "depth5000": "5,000m reached!",
+    "depth10000": "10,000m reached!",
+    "speedUp": "Speed increased!"
+  }
+}
+

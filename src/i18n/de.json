@@ -1,0 +1,55 @@
+{
+  "menu": {
+    "title": "DESCENT",
+    "subtitle": "Wie tief kannst du fallen?",
+    "play": "Spielen",
+    "settings": "Einstellungen",
+    "howToPlay": "Anleitung"
+  },
+  "game": {
+    "depth": "Tiefe",
+    "speed": "Geschwindigkeit",
+    "paused": "PAUSIERT",
+    "resume": "Fortsetzen",
+    "restart": "Neustart",
+    "mainMenu": "Hauptmenü"
+  },
+  "gameOver": {
+    "title": "GAME OVER",
+    "yourDepth": "Deine Tiefe",
+    "personalBest": "Persönlicher Rekord",
+    "newRecord": "NEUER REKORD!",
+    "playAgain": "Nochmal spielen",
+    "mainMenu": "Hauptmenü"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "language": "Sprache",
+    "music": "Musik",
+    "soundEffects": "Soundeffekte",
+    "back": "Zurück",
+    "on": "An",
+    "off": "Aus"
+  },
+  "howToPlay": {
+    "title": "Anleitung",
+    "description": "Falle endlos durch den Tunnel und weiche Hindernissen aus!",
+    "controls": "Steuerung",
+    "desktop": "Desktop: Pfeiltasten ← → oder A/D",
+    "mobile": "Mobile: Tippe links/rechts auf den Bildschirm",
+    "objective": "Ziel: Überlebe so lange wie möglich und erreiche die größte Tiefe!",
+    "tips": "Tipps",
+    "tip1": "Je tiefer du fällst, desto schneller wirst du",
+    "tip2": "Sammle Power-Ups für temporäre Vorteile",
+    "tip3": "Jede 1000m ändert sich die Farbe des Tunnels",
+    "back": "Zurück"
+  },
+  "milestones": {
+    "depth1000": "1.000m erreicht!",
+    "depth2000": "2.000m erreicht!",
+    "depth5000": "5.000m erreicht!",
+    "depth10000": "10.000m erreicht!",
+    "speedUp": "Geschwindigkeit erhöht!"
+  }
+}
+
