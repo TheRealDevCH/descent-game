@@ -132,6 +132,17 @@ function Game() {
       if (newX !== state.playerX) {
         updatePlayerX(newX);
       }
+
+      // Powerup activation with SPACE
+      if (keysPressed[' '] && engineRef.current && engineRef.current.powerupSystem) {
+        const isPowerupReady = !engineRef.current.powerupSystem.isPowerupActive('player') &&
+                              engineRef.current.powerupSystem.getPowerupCooldown('player') === 0;
+        if (isPowerupReady) {
+          engineRef.current.powerupSystem.activatePowerup('player');
+          audioSystem.playSound('powerup');
+          keysPressed[' '] = false; // Prevent repeated activation
+        }
+      }
     }, 16);
 
     window.addEventListener('keydown', handleKeyDown);

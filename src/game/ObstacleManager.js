@@ -277,21 +277,23 @@ class ObstacleManager {
 
   checkCollision(obstacle, cameraX) {
     if (obstacle.type === 'wall') {
-      // Player has a width of ~0.3 units, so we need to check if player is within gap
-      const playerWidth = 0.3;
+      // Player has a width of ~0.5 units, so we need to check if player is within gap
+      const playerWidth = 0.5;
       const inGap = Math.abs(cameraX - obstacle.gapPosition) < (obstacle.gapSize / 2 - playerWidth);
       return !inGap;
     } else if (obstacle.type === 'rotating') {
       const mesh = obstacle.meshes[0];
       const distance = Math.abs(cameraX - mesh.position.x);
-      return distance < this.collisionRadius;
+      // Increased collision radius for rotating obstacles
+      return distance < this.collisionRadius + 0.3;
     } else if (obstacle.type === 'moving') {
       const mesh = obstacle.meshes[0];
       const distance = Math.sqrt(
         Math.pow(cameraX - mesh.position.x, 2) +
         Math.pow(0 - mesh.position.y, 2)
       );
-      return distance < this.collisionRadius;
+      // Increased collision radius for moving obstacles
+      return distance < this.collisionRadius + 0.3;
     }
 
     return false;

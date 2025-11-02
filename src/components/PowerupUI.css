@@ -14,9 +14,42 @@
   transition: all 0.3s ease;
 }
 
+.powerup-icon-container {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .powerup-icon {
   font-size: 32px;
   animation: pulse 0.6s ease-in-out infinite;
+  position: absolute;
+}
+
+.powerup-key {
+  position: absolute;
+  bottom: -8px;
+  right: -8px;
+  background: rgba(255, 0, 128, 0.9);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  border: 1px solid rgba(255, 0, 128, 1);
+  box-shadow: 0 0 10px rgba(255, 0, 128, 0.6);
+}
+
+.powerup-cooldown-ring {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  opacity: 0.6;
 }
 
 .powerup-content {

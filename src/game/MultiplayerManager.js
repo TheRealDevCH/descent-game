@@ -10,7 +10,7 @@ class MultiplayerManager {
     this.updateFrequency = 500;
   }
 
-  createPlayerMesh(skin, color) {
+  createPlayerMesh(skin, color, username = 'Player') {
     const group = new THREE.Group();
 
     const geometry = new THREE.OctahedronGeometry(0.4, 2);
@@ -36,17 +36,24 @@ class MultiplayerManager {
     const glowMesh = new THREE.Mesh(glowGeometry, glowMaterial);
     group.add(glowMesh);
 
+    // Create username label
     const nameCanvas = document.createElement('canvas');
-    nameCanvas.width = 256;
-    nameCanvas.height = 64;
+    nameCanvas.width = 512;
+    nameCanvas.height = 128;
     const ctx = nameCanvas.getContext('2d');
+
+    // Clear canvas
+    ctx.clearRect(0, 0, nameCanvas.width, nameCanvas.height);
+
+    // Draw username
     ctx.fillStyle = color;
-    ctx.font = 'bold 48px Arial';
+    ctx.font = 'bold 80px Arial';
     ctx.textAlign = 'center';
-    ctx.fillText('Player', 128, 48);
+    ctx.textBaseline = 'middle';
+    ctx.fillText(username.substring(0, 15), 256, 64);
 
     const nameTexture = new THREE.CanvasTexture(nameCanvas);
-    const nameGeometry = new THREE.PlaneGeometry(2, 0.5);
+    const nameGeometry = new THREE.PlaneGeometry(3, 0.75);
     const nameMaterial = new THREE.MeshBasicMaterial({
       map: nameTexture,
       transparent: true,
@@ -66,7 +73,8 @@ class MultiplayerManager {
 
     const mesh = this.createPlayerMesh(
       playerData.character_skin || 'classic',
-      playerData.color || '#ff0080'
+      playerData.color || '#ff0080',
+      playerData.username || 'Player'
     );
 
     mesh.position.set(
@@ -132,6 +140,7 @@ class MultiplayerManager {
           depth: player.depth || 0,
           speed: player.speed || 1,
           character_skin: player.players?.character_skin || 'classic',
+          username: player.players?.username || 'Player',
           color: '#ff0080',
         };
 

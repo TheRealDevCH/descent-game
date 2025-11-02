@@ -31,7 +31,7 @@ export default async function handler(req, res) {
             id: server.id,
             name: server.name,
             playerCount: count || 0,
-            maxPlayers: 10,
+            maxPlayers: 50,
             isPrivate: server.is_private,
           };
         })
