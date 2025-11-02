@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import multiplayerService from '../utils/multiplayerService';
 import './ServerBrowser.css';
 
 function ServerBrowser({ onServerSelected, onBack }) {
@@ -40,6 +41,7 @@ function ServerBrowser({ onServerSelected, onBack }) {
         body: JSON.stringify({
           name: serverName,
           isPrivate,
+          playerId: multiplayerService.playerId,
         }),
       });
 

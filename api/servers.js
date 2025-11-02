@@ -46,7 +46,7 @@ export default async function handler(req, res) {
 
   if (req.method === 'POST') {
     try {
-      const { name, isPrivate } = req.body;
+      const { name, isPrivate, playerId } = req.body;
       const inviteCode = generateInviteCode();
 
       const { data: server, error } = await supabase
@@ -63,6 +63,19 @@ export default async function handler(req, res) {
         .single();
 
       if (error) throw error;
+
+      // Automatically add the creator to the server as the first player (leader)
+      if (playerId) {
+        await supabase
+          .from('server_players')
+          .insert([
+            {
+              server_id: server.id,
+              player_id: playerId,
+              joined_at: new Date().toISOString(),
+            },
+          ]);
+      }
 
       return res.status(201).json({
         success: true,

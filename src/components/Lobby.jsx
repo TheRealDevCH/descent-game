@@ -9,6 +9,27 @@ function Lobby({ serverId, serverData, onGameStart, onBack }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    // Join the server if not already joined
+    const joinServer = async () => {
+      try {
+        await fetch('/api/multiplayer', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'joinServer',
+            playerId: multiplayerService.playerId,
+            serverId: serverId
+          })
+        });
+      } catch (error) {
+        console.error('Error joining server:', error);
+      }
+    };
+
+    joinServer();
+  }, [serverId]);
+
+  useEffect(() => {
     // Check if current player is the leader (first player to join)
     const checkLeader = async () => {
       try {
@@ -23,7 +44,7 @@ function Lobby({ serverId, serverData, onGameStart, onBack }) {
 
         const data = await response.json();
         const serverPlayers = data.players || [];
-        
+
         // First player in the list is the leader
         if (serverPlayers.length > 0) {
           const isCurrentPlayerLeader = serverPlayers[0].player_id === multiplayerService.playerId;
