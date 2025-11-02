@@ -18,15 +18,24 @@ export default async function handler(req, res) {
     if (action === 'getServers') {
       const { data: servers, error } = await supabase
         .from('servers')
-        .select('*, server_players(count)');
+        .select('*');
 
       if (error) throw error;
 
-      // Add player count to each server
-      const serversWithCount = servers.map(server => ({
-        ...server,
-        playerCount: server.server_players?.[0]?.count || 0
-      }));
+      // Get player count for each server
+      const serversWithCount = await Promise.all(
+        servers.map(async (server) => {
+          const { count } = await supabase
+            .from('server_players')
+            .select('*', { count: 'exact', head: true })
+            .eq('server_id', server.id);
+
+          return {
+            ...server,
+            playerCount: count || 0
+          };
+        })
+      );
 
       return res.status(200).json({ servers: serversWithCount });
     }
