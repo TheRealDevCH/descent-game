@@ -3,6 +3,7 @@ import TunnelGenerator from './TunnelGenerator';
 import ObstacleManager from './ObstacleManager';
 import ParticleSystem from './ParticleSystem';
 import MultiplayerManager from './MultiplayerManager';
+import PlayerRenderer from './PlayerRenderer';
 
 class GameEngine {
   constructor(container, gameStore, audioSystem) {
@@ -17,10 +18,13 @@ class GameEngine {
     this.obstacleManager = null;
     this.particleSystem = null;
     this.multiplayerManager = null;
+    this.playerRenderer = null;
 
     this.playerSpeed = 0;
     this.playerVelocityX = 0;
     this.cameraShake = 0;
+    this.cameraDistance = 8;
+    this.cameraHeight = 2;
 
     this.init();
   }
@@ -63,6 +67,9 @@ class GameEngine {
     this.particleSystem = new ParticleSystem(this.scene);
     this.multiplayerManager = new MultiplayerManager(this.scene);
 
+    const playerColor = localStorage.getItem('characterColor') || '#ff0080';
+    this.playerRenderer = new PlayerRenderer(this.scene, playerColor);
+
     window.addEventListener('resize', this.onWindowResize.bind(this));
 
     this.animate();
@@ -87,15 +94,23 @@ class GameEngine {
     const newDepth = state.depth + this.playerSpeed * deltaTime;
     this.gameStore.getState().updateDepth(newDepth);
 
+    const playerWorldX = state.playerX * 3;
+    const playerWorldZ = 5;
+
+    const targetCameraZ = playerWorldZ - this.cameraDistance;
+    this.camera.position.z += (targetCameraZ - this.camera.position.z) * 0.1;
     this.camera.position.z -= this.playerSpeed * deltaTime;
 
     const speedFactor = Math.min(state.speed / 5, 1);
     this.camera.rotation.z = this.playerVelocityX * 0.05 * speedFactor;
 
-    const targetX = state.playerX * 3;
+    const targetX = playerWorldX;
     this.playerVelocityX += (targetX - this.camera.position.x) * 0.15;
     this.playerVelocityX *= 0.85;
     this.camera.position.x += this.playerVelocityX * deltaTime;
+
+    const targetCameraY = this.cameraHeight;
+    this.camera.position.y += (targetCameraY - this.camera.position.y) * 0.1;
 
     if (this.cameraShake > 0) {
       this.camera.position.x += (Math.random() - 0.5) * this.cameraShake;
@@ -103,11 +118,13 @@ class GameEngine {
       this.cameraShake *= 0.9;
     }
 
+    this.camera.lookAt(playerWorldX, this.cameraHeight * 0.5, playerWorldZ);
+
     this.tunnelGenerator.update(this.camera.position.z, newDepth);
 
     const collision = this.obstacleManager.update(
       this.camera.position.z,
-      this.camera.position.x,
+      playerWorldX,
       newDepth
     );
 
@@ -117,10 +134,14 @@ class GameEngine {
 
     this.particleSystem.update(this.camera.position, this.playerSpeed);
 
+    if (this.playerRenderer) {
+      this.playerRenderer.update(state.playerX, playerWorldZ, newDepth);
+    }
+
     if (this.multiplayerManager) {
       this.multiplayerManager.update(
         state.playerX,
-        this.camera.position.z,
+        playerWorldZ,
         newDepth,
         state.speed
       );
@@ -155,7 +176,7 @@ class GameEngine {
   }
 
   reset() {
-    this.camera.position.set(0, 0, 5);
+    this.camera.position.set(0, this.cameraHeight, this.cameraDistance);
     this.camera.rotation.set(0, 0, 0);
     this.playerSpeed = 0;
     this.playerVelocityX = 0;
@@ -179,6 +200,7 @@ class GameEngine {
     if (this.obstacleManager) this.obstacleManager.dispose();
     if (this.particleSystem) this.particleSystem.dispose();
     if (this.multiplayerManager) this.multiplayerManager.dispose();
+    if (this.playerRenderer) this.playerRenderer.dispose();
   }
 }
 
