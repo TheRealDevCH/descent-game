@@ -35,6 +35,41 @@ function MainMenuBackground() {
     });
     const particleSystem = new ParticleSystem(scene);
 
+    // Create player formations for background
+    const createPlayerFormation = () => {
+      const group = new THREE.Group();
+
+      // Triangle formation - 3 players
+      const positions = [
+        { x: 0, z: -5 },      // Center
+        { x: -2, z: -8 },     // Left
+        { x: 2, z: -8 }       // Right
+      ];
+
+      positions.forEach((pos, index) => {
+        const geometry = new THREE.OctahedronGeometry(0.4, 2);
+        const colors = ['#ff0080', '#00ff88', '#ffff00'];
+        const material = new THREE.MeshStandardMaterial({
+          color: new THREE.Color(colors[index]),
+          emissive: new THREE.Color(colors[index]),
+          emissiveIntensity: 0.5,
+          metalness: 0.7,
+          roughness: 0.3,
+        });
+
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.position.set(pos.x, 0, pos.z);
+        mesh.userData.originalZ = pos.z;
+        mesh.userData.bobOffset = index * Math.PI / 3;
+        group.add(mesh);
+      });
+
+      scene.add(group);
+      return group;
+    };
+
+    const playerFormation = createPlayerFormation();
+
     let depth = 0;
     let cameraZ = 8;
     const stateRef = { isRunning: true };
@@ -49,6 +84,14 @@ function MainMenuBackground() {
       camera.position.z = cameraZ;
       camera.position.x = Math.sin(Date.now() / 3000) * 0.5;
       camera.lookAt(0, 0, cameraZ - 5);
+
+      // Animate player formation - bobbing motion
+      playerFormation.children.forEach((player) => {
+        const time = Date.now() / 1000;
+        const bobAmount = Math.sin(time * 2 + player.userData.bobOffset) * 0.3;
+        player.position.y = bobAmount;
+        player.rotation.y += 0.01;
+      });
 
       tunnelGenerator.update(cameraZ, depth);
       obstacleManager.update(cameraZ, camera.position.x, depth);
