@@ -32,7 +32,7 @@ export default async function handler(req, res) {
       .select('*', { count: 'exact', head: true })
       .eq('server_id', server.id);
 
-    if (count >= 10) {
+    if (count >= 50) {
       return res.status(400).json({ error: 'Server is full' });
     }
 

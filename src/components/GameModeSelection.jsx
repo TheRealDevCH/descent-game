@@ -2,10 +2,12 @@ import { useState } from 'react';
 import useGameStore from '../store/gameStore';
 import audioSystem from '../utils/audioSystem';
 import ServerBrowser from './ServerBrowser';
+import Lobby from './Lobby';
 import './GameModeSelection.css';
 
 function GameModeSelection() {
   const [selectedMode, setSelectedMode] = useState(null);
+  const [selectedServer, setSelectedServer] = useState(null);
   const startGame = useGameStore(state => state.startGame);
 
   const handleSingleplayer = () => {
@@ -25,16 +27,39 @@ function GameModeSelection() {
     setSelectedMode(null);
   };
 
-  const handleServerSelected = (serverId) => {
+  const handleServerSelected = (serverId, serverData) => {
     audioSystem.playSound('click');
     localStorage.setItem('gameMode', 'multiplayer');
     localStorage.setItem('serverId', serverId);
+    setSelectedServer({ id: serverId, data: serverData });
+    setSelectedMode('lobby');
+  };
+
+  const handleGameStart = () => {
+    audioSystem.playSound('click');
     startGame();
   };
 
+  const handleBackFromLobby = () => {
+    audioSystem.playSound('click');
+    setSelectedServer(null);
+    setSelectedMode('multiplayer');
+  };
+
+  if (selectedMode === 'lobby' && selectedServer) {
+    return (
+      <Lobby
+        serverId={selectedServer.id}
+        serverData={selectedServer.data}
+        onGameStart={handleGameStart}
+        onBack={handleBackFromLobby}
+      />
+    );
+  }
+
   if (selectedMode === 'multiplayer') {
     return (
-      <ServerBrowser 
+      <ServerBrowser
         onBack={handleBackFromMultiplayer}
         onServerSelected={handleServerSelected}
       />

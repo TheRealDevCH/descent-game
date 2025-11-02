@@ -47,8 +47,12 @@ function ServerBrowser({ onServerSelected, onBack }) {
       if (data.success) {
         setShowCreateServer(false);
         setServerName('');
-        setIsPrivate(false);
-        onServerSelected(data.serverId);
+        const serverData = {
+          name: serverName,
+          isPrivate,
+          inviteCode: data.inviteCode,
+        };
+        onServerSelected(data.serverId, serverData);
       } else {
         setError(data.error || 'Failed to create server');
       }
@@ -60,8 +64,8 @@ function ServerBrowser({ onServerSelected, onBack }) {
     }
   };
 
-  const handleJoinServer = (serverId) => {
-    onServerSelected(serverId);
+  const handleJoinServer = (server) => {
+    onServerSelected(server.id, server);
   };
 
   const handleJoinPrivate = async () => {
@@ -81,7 +85,12 @@ function ServerBrowser({ onServerSelected, onBack }) {
       if (data.success) {
         setShowJoinPrivate(false);
         setInviteCode('');
-        onServerSelected(data.serverId);
+        const serverData = {
+          name: data.serverName,
+          isPrivate: true,
+          inviteCode: inviteCode,
+        };
+        onServerSelected(data.serverId, serverData);
       } else {
         setError(data.error || 'Failed to join server');
       }
@@ -221,7 +230,7 @@ function ServerBrowser({ onServerSelected, onBack }) {
               </div>
               <button
                 className="button button-play"
-                onClick={() => handleJoinServer(server.id)}
+                onClick={() => handleJoinServer(server)}
               >
                 Join
               </button>

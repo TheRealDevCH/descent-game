@@ -12,10 +12,10 @@ function generateInviteCode() {
 export default async function handler(req, res) {
   if (req.method === 'GET') {
     try {
+      // Get ALL servers (both public and private)
       const { data: servers, error } = await supabase
         .from('servers')
         .select('*')
-        .eq('is_private', false)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -33,6 +33,7 @@ export default async function handler(req, res) {
             playerCount: count || 0,
             maxPlayers: 50,
             isPrivate: server.is_private,
+            inviteCode: server.invite_code,
           };
         })
       );

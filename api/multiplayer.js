@@ -101,6 +101,26 @@ export default async function handler(req, res) {
       return res.status(200).json({ success: true });
     }
 
+    if (action === 'getServerPlayers') {
+      const { serverId } = req.body;
+
+      if (!serverId) {
+        return res.status(400).json({ error: 'Server ID required' });
+      }
+
+      const { data: players, error } = await supabase
+        .from('server_players')
+        .select('*, players(username, character_skin)')
+        .eq('server_id', serverId)
+        .order('joined_at', { ascending: true });
+
+      if (error) {
+        return res.status(400).json({ error: error.message });
+      }
+
+      return res.status(200).json({ players: players || [] });
+    }
+
     if (action === 'getActivePlayers') {
       const { serverId } = req.body;
 
