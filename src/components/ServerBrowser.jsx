@@ -11,6 +11,7 @@ function ServerBrowser({ onServerSelected, onBack }) {
   const [isPrivate, setIsPrivate] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     fetchServers();
@@ -26,6 +27,12 @@ function ServerBrowser({ onServerSelected, onBack }) {
     } catch (error) {
       console.error('Error fetching servers:', error);
     }
+  };
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await fetchServers();
+    setRefreshing(false);
   };
 
   const handleCreateServer = async () => {
@@ -214,6 +221,13 @@ function ServerBrowser({ onServerSelected, onBack }) {
           onClick={() => setShowJoinPrivate(true)}
         >
           Join Private
+        </button>
+        <button
+          className="button button-secondary"
+          onClick={handleRefresh}
+          disabled={refreshing}
+        >
+          {refreshing ? '🔄 Refreshing...' : '🔄 Refresh'}
         </button>
       </div>
 
